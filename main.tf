@@ -1,6 +1,16 @@
-
 provider "aws" {
   region = "ap-south-2"
+}
+
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+
+  owners = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023.*-x86_64"]
+  }
 }
 
 resource "aws_security_group" "riya_sg" {
@@ -34,7 +44,7 @@ resource "aws_s3_bucket" "riya_bucket" {
 }
 
 resource "aws_instance" "riya_ec2" {
-  ami = "ami-02d26659fd82cf299"
+  ami           = data.aws_ami.amazon_linux.id
   instance_type = "t3.micro"
 
   vpc_security_group_ids = [aws_security_group.riya_sg.id]
